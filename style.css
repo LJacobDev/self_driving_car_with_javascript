@@ -1,0 +1,22 @@
+body{
+    margin:0;
+    background: darkgray;
+
+    /*
+        this is supposed to prevent
+        the scrollbar from showing 
+        if the canvas gets larger than the window
+    */
+    overflow: hidden;
+    
+    /*
+        this text-align center
+        makes the canvas centered
+        in the body element
+    */
+    text-align: center;
+}
+
+#myCanvas{
+    background: lightgray;
+}
