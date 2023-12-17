@@ -35,7 +35,7 @@ class Controls
                     break;
             }
             //console.log(this.counter++)
-            console.table(this);
+            //console.table(this);
         }
 
         document.onkeyup = (event) => {
@@ -55,7 +55,7 @@ class Controls
                     break;
             }
             //console.log(this.counter++);
-            console.table(this);
+            //console.table(this);
         }
 
     }

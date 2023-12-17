@@ -21,6 +21,13 @@ class Car
 
     update()
     {
+       this.#move();
+    }
+
+
+
+    #move(){
+
         if(this.controls.forward){
             this.speed += this.acceleration;
         }
@@ -52,8 +59,6 @@ class Car
         
 
         //implement turning
-        //starting point with a simple component,
-        //then improve it to have better handling next
         if(this.speed != 0){
 
             /*
@@ -104,7 +109,7 @@ class Car
     
         this.x -= Math.sin(this.angle) * this.speed;
         this.y -= Math.cos(this.angle) * this.speed;
-       
+
     }
 
     draw(context)
