@@ -25,10 +25,10 @@ class Car
             this.speed -= this.acceleration;
         }
         
+        //cap the speed of the car
         if (this.speed > this.maxSpeed){
             this.speed = this.maxSpeed;
         }
-
         //make the top reversing speed half that of forward
         if (this.speed < -this.maxSpeed/2){
             this.speed = -this.maxSpeed/2;
@@ -39,29 +39,29 @@ class Car
         if(this.speed > 0){
             this.speed -= this.friction;
         }
-
         if(this.speed < 0){
             this.speed += this.friction;
         }
-
         //stop jittering on friction with low speeds
         if (Math.abs(this.speed) < this.friction){
             this.speed = 0;
         }
         
         //console.log(this.speed);
-
         this.y-= this.speed;
 
-        /*
+
+        //implement turning
+        //starting point with a simple component,
+        //then improve it to have better handling next
         if(this.controls.left){
             this.x-=2;
         }
         if(this.controls.right){
             this.x+=2;
         }
-        */
-       
+
+        
     }
 
     draw(context)
