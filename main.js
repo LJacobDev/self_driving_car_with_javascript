@@ -38,7 +38,6 @@ function animate(){
     //draw car on canvas at new position
     car.draw(context);
 
-
     context.restore();
 
     //this will cause this animate method 
