@@ -40,3 +40,22 @@ function getIntersection(A, B, C, D) {
 
    return null;
 }
+
+
+//returns true if two polygons have intersected
+//works even if one argument is a 2 point line segment
+function polysIntersect(poly1, poly2) {
+   for (let i = 0; i < poly1.length; i++) {
+      for (let j = 0; j < poly2.length; j++) {
+         const touch = getIntersection(
+            poly1[i],
+            poly1[(i + 1) % poly1.length], //the % operator turns what would be the first out of bounds index of length + 1 into 0 so it reconnects back to the first point to close the polygon
+            poly2[j],
+            poly2[(j + 1) % poly2.length]
+         );
+         if(touch)
+            return true;
+      }
+   }
+   return false;
+}

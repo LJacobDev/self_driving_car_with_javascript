@@ -14,6 +14,8 @@ class Car {
         this.angle = 0;
         this.turnSpeed = 0.03;
 
+        this.damaged = false;
+
         this.sensor = new Sensor(this);
         this.controls = new Controls();
     }
@@ -21,6 +23,7 @@ class Car {
     update(roadBorders) {
         this.#move();
         this.polygon = this.#createPolygon();
+        this.damaged = this.#assessDamage(roadBorders);
         this.sensor.update(roadBorders);
     }
 
@@ -132,82 +135,100 @@ class Car {
         //height to hypotenuse, which gives the angle from
         //the centre forward orientation at which a corner will be
         //atan2 gets angle from x axis to a point, but this x axis is aligned with car forward
-        const alpha=Math.atan2(this.width, this.height);
+        const alpha = Math.atan2(this.width, this.height);
 
         //add the point of a car corner to the points array,
         //by taking the car angle, the car x location,
         //and adding and subtracting the alpha angle
         //to give the top two corner points, using sine, cosine and radius
         //and then repeating that step but adding PI so it gets the bottom two corners
-        
+
         //adding the top right corner point
         points.push({
-            x:this.x - Math.sin(this.angle - alpha) * rad,
-            y:this.y - Math.cos(this.angle - alpha) * rad,
+            x: this.x - Math.sin(this.angle - alpha) * rad,
+            y: this.y - Math.cos(this.angle - alpha) * rad,
         })
 
         //adding the top left corner point
         points.push({
-            x:this.x - Math.sin(this.angle + alpha) * rad,
-            y:this.y - Math.cos(this.angle + alpha) * rad,
+            x: this.x - Math.sin(this.angle + alpha) * rad,
+            y: this.y - Math.cos(this.angle + alpha) * rad,
         })
-        
+
         //adding the bottom left corner point
         points.push({
-            x:this.x - Math.sin(Math.PI + this.angle - alpha) * rad,
-            y:this.y - Math.cos(Math.PI + this.angle - alpha) * rad,
+            x: this.x - Math.sin(Math.PI + this.angle - alpha) * rad,
+            y: this.y - Math.cos(Math.PI + this.angle - alpha) * rad,
         })
 
         //adding the bottom right corner point
         points.push({
-            x:this.x - Math.sin(Math.PI + this.angle + alpha) * rad,
-            y:this.y - Math.cos(Math.PI + this.angle + alpha) * rad,
+            x: this.x - Math.sin(Math.PI + this.angle + alpha) * rad,
+            y: this.y - Math.cos(Math.PI + this.angle + alpha) * rad,
         })
 
         return points;
     }
 
 
+    #assessDamage(roadBorders){
+        for(let i = 0; i < roadBorders.length; i++){
+            if(polysIntersect(this.polygon, roadBorders[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     draw(context) {
+
+        if(this.damaged){
+            context.fillStyle="gray";
+        }
+        else{
+            context.fillStyle="black";
+        }
+        
 
 
         context.beginPath();
         context.moveTo(this.polygon[0].x, this.polygon[0].y);
-        for (let i = 1; i < this.polygon.length; i++){
+        for (let i = 1; i < this.polygon.length; i++) {
             context.lineTo(this.polygon[i].x, this.polygon[i].y);
         }
         //context.stroke();  //draws line from topright to topleft, to bottomleft, to bottomright, a gap where the right edge would be, like a blocky C shape or [
         context.fill();  //fills in a rectangle based on those four points
 
-/*      this draw section is able to be replaced
-        by drawing the points of the polygon property
+        /*      this draw section is able to be replaced
+                by drawing the points of the polygon property
+                
         
-
-        //this was added along with context.restore()
-        //but the effect it has isn't immediately visible
-        //at this stage of just adding the .translate()
-        //and .rotate()
-        context.save();
-
-        //apply rotation and position
-        context.translate(this.x, this.y);
-        context.rotate(-this.angle);
-
-        context.beginPath();
-        context.rect(
-            -this.width / 2,
-            -this.height / 2,
-            this.width,
-            this.height
-        );
-        context.fill();
-
-        //this was added along with context.save()
-        //but the effect it has isn't immediately visible
-        //at this stage of just adding the .translate()
-        //and .rotate()
-        context.restore();
-*/
+                //this was added along with context.restore()
+                //but the effect it has isn't immediately visible
+                //at this stage of just adding the .translate()
+                //and .rotate()
+                context.save();
+        
+                //apply rotation and position
+                context.translate(this.x, this.y);
+                context.rotate(-this.angle);
+        
+                context.beginPath();
+                context.rect(
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
+                context.fill();
+        
+                //this was added along with context.save()
+                //but the effect it has isn't immediately visible
+                //at this stage of just adding the .translate()
+                //and .rotate()
+                context.restore();
+        */
 
         this.sensor.draw(context);
     }
