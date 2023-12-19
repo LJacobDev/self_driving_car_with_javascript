@@ -20,7 +20,8 @@ function animate(){
 
 
     //gets car movement and updates its xy position
-    car.update();
+    //give it the road borders so the car's sensors can look for them
+    car.update(road.borders);
 
     
     //make the road move the opposite vertical
