@@ -19,13 +19,20 @@ function animate() {
 
 
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].update(road.borders);
+        
+        //giving this update an empty array argument
+        //because traffic is not meant to detect other traffic
+        //but it is using a general method that does check
+        //the traffic objects in this array if there are any
+        traffic[i].update(road.borders, []);
     }
 
 
     //gets car movement and updates its xy position
     //give it the road borders so the car's sensors can look for them
-    car.update(road.borders);
+    //give it the traffic array so it can detect distance to cars
+    //and check other cars for collisions
+    car.update(road.borders, traffic);
 
     //putting this in the animation loop
     //allows it to vertically resize to window changes

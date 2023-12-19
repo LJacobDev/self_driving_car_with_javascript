@@ -16,18 +16,23 @@ class Car {
 
         this.damaged = false;
 
-        this.sensor = new Sensor(this);
+        if(controlType != "DRIVEFORWARD")
+            this.sensor = new Sensor(this);
+
         this.controls = new Controls(controlType);
     }
 
-    update(roadBorders) {
+    update(roadBorders, traffic) {
 
         if (!this.damaged) {
             this.#move();
             this.polygon = this.#createPolygon();
-            this.damaged = this.#assessDamage(roadBorders);
+            this.damaged = this.#assessDamage(roadBorders, traffic);
         }
-        this.sensor.update(roadBorders);
+
+        if(this.sensor)
+            this.sensor.update(roadBorders, traffic);
+
     }
 
 
@@ -174,12 +179,19 @@ class Car {
     }
 
 
-    #assessDamage(roadBorders) {
+    #assessDamage(roadBorders, traffic) {
         for (let i = 0; i < roadBorders.length; i++) {
             if (polysIntersect(this.polygon, roadBorders[i])) {
                 return true;
             }
         }
+        
+        for (let i = 0; i < traffic.length; i++) {
+            if (polysIntersect(this.polygon, traffic[i].polygon)) {
+                return true;
+            }
+        }
+        
         return false;
     }
 
@@ -203,37 +215,8 @@ class Car {
         //context.stroke();  //draws line from topright to topleft, to bottomleft, to bottomright, a gap where the right edge would be, like a blocky C shape or [
         context.fill();  //fills in a rectangle based on those four points
 
-        /*      this draw section is able to be replaced
-                by drawing the points of the polygon property
-                
-        
-                //this was added along with context.restore()
-                //but the effect it has isn't immediately visible
-                //at this stage of just adding the .translate()
-                //and .rotate()
-                context.save();
-        
-                //apply rotation and position
-                context.translate(this.x, this.y);
-                context.rotate(-this.angle);
-        
-                context.beginPath();
-                context.rect(
-                    -this.width / 2,
-                    -this.height / 2,
-                    this.width,
-                    this.height
-                );
-                context.fill();
-        
-                //this was added along with context.save()
-                //but the effect it has isn't immediately visible
-                //at this stage of just adding the .translate()
-                //and .rotate()
-                context.restore();
-        */
-
-        this.sensor.draw(context);
+        if(this.sensor)
+                this.sensor.draw(context);
     }
 }
 
