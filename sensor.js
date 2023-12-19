@@ -1,6 +1,6 @@
-class Sensor{
+class Sensor {
 
-    constructor(car){
+    constructor(car) {
         //this sensor is attached to a car,
         //so it is given a car object to keep as a property
         this.car = car;
@@ -14,59 +14,60 @@ class Sensor{
         //the rays use PI * 2 to get a full 360 degree spread
         this.raySpread = Math.PI / 2;
 
-        this.rays=[];
-        this.readings=[];
+        this.rays = [];
+        this.readings = [];
     }
 
-    update(roadBorders)
-    {
+    update(roadBorders, traffic) {
         this.#castRays();
 
-        this.readings=[];
-        for(let i = 0; i < this.rays.length; i++){
+        this.readings = [];
+        for (let i = 0; i < this.rays.length; i++) {
             this.readings.push(
-                this.#getReading(this.rays[i], roadBorders)
+                this.#getReading(
+                    this.rays[i],
+                    roadBorders,
+                    traffic
+                )
             );
         }
     }
 
-    #castRays()
-    {
+    #castRays() {
         this.rays = [];
-        for(let i=0; i < this.rayCount; i++){
+        for (let i = 0; i < this.rayCount; i++) {
             const rayAngle = lerp(
-                this.raySpread/2,
-                -this.raySpread/2,
+                this.raySpread / 2,
+                -this.raySpread / 2,
                 //when using1 rayCount, just put one line in the middle of the spread area, otherwise draw them as interpolated from 0 to rayCount-1
-                this.rayCount == 1 ? 0.5 : i/(this.rayCount - 1) //since the i doesn't iterate to be equal to rayCount in this for loop, use rayCount - 1 here
-                
+                this.rayCount == 1 ? 0.5 : i / (this.rayCount - 1) //since the i doesn't iterate to be equal to rayCount in this for loop, use rayCount - 1 here
+
             ) + this.car.angle;
 
-            
+
 
             //starting point of each ray is the car centre
-            const start = {x:this.car.x, y:this.car.y};
+            const start = { x: this.car.x, y: this.car.y };
             //console.log(start);
             const end = {
                 x: this.car.x - Math.sin(rayAngle) * this.rayLength,
-                y: this.car.y - Math.cos(rayAngle) * this.rayLength            
+                y: this.car.y - Math.cos(rayAngle) * this.rayLength
             };
-            
+
 
             //with start and endpoints made, put them into this.rays
-            this.rays.push([start,end]);
+            this.rays.push([start, end]);
         }
     }
 
-    #getReading(ray, roadBorders)
-    {
+    #getReading(ray, roadBorders, traffic) {
         //check for all points that the ray passes through
         //whether the left edge, right edge, or later on, other car locations
         //and use the closest touch point as the reading distance to go with
-        let touches=[];
+        let touches = [];
 
-        for(let i = 0; i < roadBorders.length; i++){
-            
+        for (let i = 0; i < roadBorders.length; i++) {
+
             //this function will compare two line segments,
             //by using their respective start and end points,
             //and will return an intersection point between
@@ -77,19 +78,36 @@ class Sensor{
                 roadBorders[i][0],
                 roadBorders[i][1]
             );
-            if(touch){
+            if (touch) {
                 touches.push(touch);
             }
         }
 
-        if(touches.length == 0)
+        for (let i = 0; i < traffic.length; i++){
+            const poly=traffic[i].polygon;
+
+            for(let j = 0; j < poly.length; j++){
+                const value = getIntersection(
+                    ray[0],
+                    ray[1],
+                    poly[j],
+                    poly[(j+1)%poly.length]
+                );
+                if(value){
+                    touches.push(value);
+                }
+            }
+            
+        }
+
+        if (touches.length == 0)
             return null;
-        else{
+        else {
             //getIntersection returns an x, y, and offset from sensor start point
             //and we are only interested in collecting the offsets
             //into an array
             const offsets = touches.map(e => e.offset);
-            
+
             //find the minimum value of the offset array
             //by using spread operator of array into Math.min
             const minOffset = Math.min(...offsets);
@@ -102,13 +120,13 @@ class Sensor{
 
     }
 
-    draw(context){
-        for(let i = 0; i < this.rayCount; i++){
- 
+    draw(context) {
+        for (let i = 0; i < this.rayCount; i++) {
+
             //draw the full ray if it doesn't touch anything
             let endpoint = this.rays[i][1];
             //if there is a reading, make the ray end at the touch point
-            if(this.readings[i]){
+            if (this.readings[i]) {
                 endpoint = this.readings[i];
             }
 
@@ -117,8 +135,8 @@ class Sensor{
             //to either the end point of the ray
             //or to the touch point of the ray if any
             context.beginPath();
-            context.lineWidth=2;
-            context.strokeStyle="yellow";
+            context.lineWidth = 2;
+            context.strokeStyle = "yellow";
             context.moveTo(
                 this.rays[i][0].x,
                 this.rays[i][0].y
@@ -137,8 +155,8 @@ class Sensor{
             //where the ray would have ended extending
             //past any touch points
             context.beginPath();
-            context.lineWidth=2;
-            context.strokeStyle="black";
+            context.lineWidth = 2;
+            context.strokeStyle = "black";
             context.moveTo(
                 this.rays[i][1].x,
                 this.rays[i][1].y
