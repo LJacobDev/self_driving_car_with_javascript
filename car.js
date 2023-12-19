@@ -154,14 +154,14 @@ class Car {
         
         //adding the bottom left corner point
         points.push({
-            x:this.x - Math.sin(PI + this.angle - alpha) * rad,
-            y:this.y - Math.cos(PI + this.angle - alpha) * rad,
+            x:this.x - Math.sin(Math.PI + this.angle - alpha) * rad,
+            y:this.y - Math.cos(Math.PI + this.angle - alpha) * rad,
         })
 
         //adding the bottom right corner point
         points.push({
-            x:this.x - Math.sin(PI + this.angle + alpha) * rad,
-            y:this.y - Math.cos(PI + this.angle + alpha) * rad,
+            x:this.x - Math.sin(Math.PI + this.angle + alpha) * rad,
+            y:this.y - Math.cos(Math.PI + this.angle + alpha) * rad,
         })
 
         return points;
@@ -169,6 +169,20 @@ class Car {
 
 
     draw(context) {
+
+
+        context.beginPath();
+        context.moveTo(this.polygon[0].x, this.polygon[0].y);
+        for (let i = 1; i < this.polygon.length; i++){
+            context.lineTo(this.polygon[i].x, this.polygon[i].y);
+        }
+        //context.stroke();  //draws line from topright to topleft, to bottomleft, to bottomright, a gap where the right edge would be, like a blocky C shape or [
+        context.fill();  //fills in a rectangle based on those four points
+
+/*      this draw section is able to be replaced
+        by drawing the points of the polygon property
+        
+
         //this was added along with context.restore()
         //but the effect it has isn't immediately visible
         //at this stage of just adding the .translate()
@@ -193,7 +207,7 @@ class Car {
         //at this stage of just adding the .translate()
         //and .rotate()
         context.restore();
-
+*/
 
         this.sensor.draw(context);
     }
