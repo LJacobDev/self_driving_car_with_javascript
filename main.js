@@ -53,10 +53,10 @@ function animate() {
 
     road.draw(context);
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].draw(context);
+        traffic[i].draw(context, "red");
     }    
     //draw car on canvas at new position
-    car.draw(context);
+    car.draw(context, "blue");
 
     context.restore();
 
