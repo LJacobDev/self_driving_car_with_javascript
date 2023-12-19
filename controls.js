@@ -1,14 +1,21 @@
 class Controls
 {
 
-    constructor()
+    constructor(controlType)
     {
         this.forward = false;
         this.reverse = false;
         this.left = false;
         this.right = false;
 
-        this.#addKeyboardListeners();
+        switch(controlType){
+            case "KEYS":
+                this.#addKeyboardListeners();
+                break;
+            case "DRIVEFORWARD":
+                this.forward = true;
+                break;
+        }
         
         //counter shows that onkeydown event
         //fires many times per second and not just once
