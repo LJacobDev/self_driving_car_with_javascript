@@ -2,7 +2,7 @@ const carCanvas = document.getElementById("carCanvas");
 carCanvas.width = 200;
 
 const networkCanvas = document.getElementById("networkCanvas");
-networkCanvas.width = 300;
+networkCanvas.width = 500;
 
 const carContext = carCanvas.getContext("2d");
 const networkContext = networkCanvas.getContext("2d");
@@ -12,8 +12,23 @@ const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9, 3);
 
 //const car = new Car(road.getLaneCenter(1), 100, 30, 50,"AI", 3);
 
-const N = 2000;
-const cars = generateCars(N);
+
+//these are the main controls
+const N = 1000;
+const speed = 8;
+const mutationRate = 0.1;
+
+
+const carsText = document.getElementById("carsText")
+carsText.innerText = `Cars\n ${N}\n`;
+
+const speedText = document.getElementById("speedText")
+speedText.innerText = `Speed\n ${speed}\n`;
+
+const mutationText = document.getElementById("mutationText")
+mutationText.innerText = `Mutation\n ${mutationRate}\n`;
+
+const cars = generateCars(N, speed);
 let bestCar = cars[0];
 
 if(localStorage.getItem("bestBrain")){
@@ -26,7 +41,7 @@ if(localStorage.getItem("bestBrain")){
         );
 
         if(i != 0){
-            NeuralNetwork.mutate(cars[i].brain, 0.1);
+            NeuralNetwork.mutate(cars[i].brain, mutationRate);
         }
 
     }
@@ -35,6 +50,8 @@ else{
     console.log("no saved 'bestBrain' found");
 }
 
+//any number of traffic cars can be added using lanes 0 - 2
+//and by giving them increasinly smaller (more negative) y coordinates
 const traffic = [
     new Car(road.getLaneCenter(1), -100, 30, 50, "DRIVEFORWARD", 2),
     new Car(road.getLaneCenter(0), -300, 30, 50, "DRIVEFORWARD", 2),
@@ -73,10 +90,10 @@ function discard() {
     console.log("cleared 'bestBrain' from save data");
 }
 
-function generateCars(N) {
+function generateCars(N, speed) {
     const cars = [];
     for (let i = 1; i <= N; i++) {
-        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"))
+        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI", speed))
     }
     return cars;
 }

@@ -21,7 +21,7 @@ class Car {
         if (controlType != "DRIVEFORWARD") {
             this.sensor = new Sensor(this);
             this.brain = new NeuralNetwork(
-                [this.sensor.rayCount, 6, 4]
+                [this.sensor.rayCount, 8,8, 4]
             );
         }
         this.controls = new Controls(controlType);
