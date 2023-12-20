@@ -1,3 +1,37 @@
+class NeuralNetwork {
+    constructor(neuronCounts) {
+
+        //this network consists of an array of network levels
+        this.levels = [];
+
+        //neuronCounts is an array of neuron numbers, like
+        //[5, 6, 4] in the case of having 5 sensor inputs, 
+        //6 neurons in the middle,
+        //and 4 neurons as final outputs
+
+        for (let i = 0; i < neuronCounts.length - 1; i++) {
+            this.levels.push(new Level(
+                neuronCounts[i], neuronCounts[i + 1]
+            ));
+        }
+
+    }
+
+    static feedForward(givenInputs, network) {
+        let outputs = Level.feedForward(
+            givenInputs, network.levels[0]
+        );
+
+        for (let i = 1; i < network.levels.length; i++) {
+            outputs = Level.feedForward(
+                outputs, network.levels[i]
+            );
+        }
+        return outputs;
+    }
+}
+
+
 class Level {
     constructor(inputCount, outputCount) {
 
