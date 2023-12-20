@@ -1,9 +1,13 @@
-const canvas = document.getElementById("myCanvas");
-canvas.width = 200;
+const carCanvas = document.getElementById("carCanvas");
+carCanvas.width = 200;
 
-const context = canvas.getContext("2d");
+const networkCanvas = document.getElementById("networkCanvas");
+networkCanvas.width = 300;
 
-const road = new Road(canvas.width / 2, canvas.width * 0.9, 3);
+const carContext = carCanvas.getContext("2d");
+const networkContext = networkCanvas.getContext("2d");
+
+const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9, 3);
 
 const car = new Car(road.getLaneCenter(1), 100, 30, 50,"AI", 3);
 
@@ -15,7 +19,7 @@ const traffic = [
 
 animate();
 
-function animate() {
+function animate(time) {
 
 
     for (let i = 0; i < traffic.length; i++) {
@@ -39,26 +43,39 @@ function animate() {
     //but it also acts like erasing the
     //past locations of the car so it doesn't leave streaks
     //when it moves
-    canvas.height = window.innerHeight;
+    carCanvas.height = window.innerHeight;
+
+    networkCanvas.height = window.innerHeight;
 
     //make the road move the opposite vertical
     //way that the car moves
     //making the car stay in view and the road appear to go by
-    context.save();
+    carContext.save();
 
     //the canvas moves opposite direction of the car,
     //but is translated so that the car appears to be
     //70% of the way down the canvas viewspace
-    context.translate(0, -car.y + canvas.height * 0.7);
+    carContext.translate(0, -car.y + carCanvas.height * 0.7);
 
-    road.draw(context);
+    road.draw(carContext);
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].draw(context, "red");
+        traffic[i].draw(carContext, "red");
     }    
     //draw car on canvas at new position
-    car.draw(context, "blue");
+    car.draw(carContext, "blue");
 
-    context.restore();
+    carContext.restore();
+
+
+    //this makes the connections between the neurons
+    //look like moving dashed lines
+    networkContext.lineDashOffset = -time/50;
+
+    //this is supposed to be showing what the neuron
+    //on and off states are, but it doesn't seem to be doing that yet,
+    //but it does show the outputs being used
+    //and it seems to show what the weights of the connections are
+    Visualizer.drawNetwork(networkContext, car.brain);
 
     //this will cause this animate method 
     //to be run several times per second

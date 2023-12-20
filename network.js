@@ -63,7 +63,7 @@ class Level {
     //so that it can be serialized
     static #randomize(level) {
 
-        console.log(level.inputs.length, level.outputs.length);
+        //console.log(level.inputs.length, level.outputs.length);
 
         //set the weights of each connection
         for (let i = 0; i < level.inputs.length; i++) {
