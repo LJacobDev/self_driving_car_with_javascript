@@ -17,17 +17,28 @@ const cars = generateCars(N);
 let bestCar = cars[0];
 
 if(localStorage.getItem("bestBrain")){
-    console.log("loading saved car 'bestbrain'")
-    bestCar.brain=JSON.parse(
-        localStorage.getItem("bestBrain")
-    );
+    console.log("loading saved car 'bestbrain' as well as creating "+ N-1 + " other mutated versions based off it")
+
+    for(let i=0; i < cars.length; i++){
+
+        cars[i].brain=JSON.parse(
+            localStorage.getItem("bestBrain")
+        );
+
+        if(i != 0){
+            NeuralNetwork.mutate(cars[i].brain, 0.1);
+        }
+
+    }
 }
 else{
     console.log("no saved 'bestBrain' found");
 }
 
 const traffic = [
-    new Car(road.getLaneCenter(1), -100, 30, 50, "DRIVEFORWARD", 2)
+    new Car(road.getLaneCenter(1), -100, 30, 50, "DRIVEFORWARD", 2),
+    new Car(road.getLaneCenter(0), -300, 30, 50, "DRIVEFORWARD", 2),
+    new Car(road.getLaneCenter(2), -300, 30, 50, "DRIVEFORWARD", 2)
 ];
 
 
