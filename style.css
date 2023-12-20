@@ -8,13 +8,15 @@ body{
         if the canvas gets larger than the window
     */
     overflow: hidden;
-    
-    /*
-        this text-align center
-        makes the canvas centered
-        in the body element
-    */
-    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#verticalButtons{
+    display: flex;
+    flex-direction: column;
 }
 
 #carCanvas{
