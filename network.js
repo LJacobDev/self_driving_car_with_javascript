@@ -63,9 +63,12 @@ class Level {
     //so that it can be serialized
     static #randomize(level) {
 
+        console.log(level.inputs.length, level.outputs.length);
+
         //set the weights of each connection
         for (let i = 0; i < level.inputs.length; i++) {
-            for (let j = 0; i < level.outputs.length; j++) {
+            for (let j = 0; j < level.outputs.length; j++) {
+                //console.log(i,j);
                 level.weights[i][j] = Math.random() * 2 - 1;  //this sets each weight to something between -1 and 1
             }
         }

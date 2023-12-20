@@ -16,9 +16,14 @@ class Car {
 
         this.damaged = false;
 
-        if(controlType != "DRIVEFORWARD")
-            this.sensor = new Sensor(this);
+        this.useBrain = controlType == "AI";
 
+        if (controlType != "DRIVEFORWARD") {
+            this.sensor = new Sensor(this);
+            this.brain = new NeuralNetwork(
+                [this.sensor.rayCount, 6, 4]
+            );
+        }
         this.controls = new Controls(controlType);
     }
 
@@ -30,8 +35,28 @@ class Car {
             this.damaged = this.#assessDamage(roadBorders, traffic);
         }
 
-        if(this.sensor)
+        if (this.sensor) {
             this.sensor.update(roadBorders, traffic);
+            const offsets = this.sensor.readings.map(
+                s => s == null ? 0 : 1 - s.offsets  //uses 1-s.offset so that the reading is greater the closer the touch point is to the sensor start point
+            );
+
+            //give the neural network the 5 sensor offsets
+            //and get back an array of decisions like [1,1,0,0]
+            //which can be mapped to the decisions to go forward, back, left, right
+            const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+
+            //the key inputs are still able to control this car,
+            //however if the useBrain property is enabled,
+            //it will override the keyboard control here with 
+            //the neural network outputs as the movement controls
+            if(this.useBrain){
+                this.controls.forward = outputs[0];
+                this.controls.left = outputs[1];
+                this.controls.right = outputs[2];
+                this.controls.reverse = outputs[3];
+            }
+        }
 
     }
 
@@ -185,13 +210,13 @@ class Car {
                 return true;
             }
         }
-        
+
         for (let i = 0; i < traffic.length; i++) {
             if (polysIntersect(this.polygon, traffic[i].polygon)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -215,8 +240,8 @@ class Car {
         //context.stroke();  //draws line from topright to topleft, to bottomleft, to bottomright, a gap where the right edge would be, like a blocky C shape or [
         context.fill();  //fills in a rectangle based on those four points
 
-        if(this.sensor)
-                this.sensor.draw(context);
+        if (this.sensor)
+            this.sensor.draw(context);
     }
 }
 
