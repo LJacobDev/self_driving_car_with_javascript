@@ -9,8 +9,11 @@ const networkContext = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9, 3);
 
-const car = new Car(road.getLaneCenter(1), 100, 30, 50,"AI", 3);
 
+//const car = new Car(road.getLaneCenter(1), 100, 30, 50,"AI", 3);
+
+const N = 1000;
+const cars = generateCars(N);
 
 const traffic = [
     new Car(road.getLaneCenter(1), -100, 30, 50, "DRIVEFORWARD", 2)
@@ -18,6 +21,17 @@ const traffic = [
 
 
 animate();
+
+
+
+function generateCars(N){
+    const cars=[];
+    for(let i=1; i<=N; i++){
+        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"))
+    }
+    return cars;
+}
+
 
 function animate(time) {
 
@@ -36,7 +50,20 @@ function animate(time) {
     //give it the road borders so the car's sensors can look for them
     //give it the traffic array so it can detect distance to cars
     //and check other cars for collisions
-    car.update(road.borders, traffic);
+    for(let i = 0; i < cars.length; i++){
+        cars[i].update(road.borders, traffic);
+    }
+    
+
+    //get the best car by finding which one has the
+    //lowest y value, indicating it has made it farther down
+    //the road than any other
+    const bestCar = cars.find(
+        c=>c.y==Math.min(
+            ...cars.map(c=>c.y)
+        )
+    )
+
 
     //putting this in the animation loop
     //allows it to vertically resize to window changes
@@ -55,14 +82,24 @@ function animate(time) {
     //the canvas moves opposite direction of the car,
     //but is translated so that the car appears to be
     //70% of the way down the canvas viewspace
-    carContext.translate(0, -car.y + carCanvas.height * 0.7);
+    carContext.translate(0, -bestCar.y + carCanvas.height * 0.7);
 
     road.draw(carContext);
     for (let i = 0; i < traffic.length; i++) {
         traffic[i].draw(carContext, "red");
     }    
+
+    //lower the colour alpha of the blue cars
+    carContext.globalAlpha=0.2;
     //draw car on canvas at new position
-    car.draw(carContext, "blue");
+    for(let i=0; i<cars.length; i++){
+        cars[i].draw(carContext, "blue");
+    }
+    
+    carContext.globalAlpha=1;
+    
+    //draw one car of interest again in full alpha colour
+    bestCar.draw(carContext, "blue", true);
 
     carContext.restore();
 
@@ -75,7 +112,7 @@ function animate(time) {
     //on and off states are, but it doesn't seem to be doing that yet,
     //but it does show the outputs being used
     //and it seems to show what the weights of the connections are
-    Visualizer.drawNetwork(networkContext, car.brain);
+    Visualizer.drawNetwork(networkContext, bestCar.brain);
 
     //this will cause this animate method 
     //to be run several times per second

@@ -38,8 +38,10 @@ class Car {
         if (this.sensor) {
             this.sensor.update(roadBorders, traffic);
             const offsets = this.sensor.readings.map(
-                s => s == null ? 0 : 1 - s.offsets  //uses 1-s.offset so that the reading is greater the closer the touch point is to the sensor start point
+                //s => s.offsets  uncommenting this line and commenting the one below was to debug the reading inputs seeming to be all null here
+                s => s == null ? 0 : 1 - s.offset  //uses 1-s.offset so that the reading is greater the closer the touch point is to the sensor start point
             );
+
 
             //give the neural network the 5 sensor offsets
             //and get back an array of decisions like [1,1,0,0]
@@ -221,7 +223,7 @@ class Car {
     }
 
 
-    draw(context, color) {
+    draw(context, color, drawSensors=false) {
 
         if (this.damaged) {
             context.fillStyle = "gray";
@@ -240,7 +242,7 @@ class Car {
         //context.stroke();  //draws line from topright to topleft, to bottomleft, to bottomright, a gap where the right edge would be, like a blocky C shape or [
         context.fill();  //fills in a rectangle based on those four points
 
-        if (this.sensor)
+        if (this.sensor && drawSensors)
             this.sensor.draw(context);
     }
 }

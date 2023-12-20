@@ -22,7 +22,9 @@ class Sensor {
         this.#castRays();
 
         this.readings = [];
+
         for (let i = 0; i < this.rays.length; i++) {
+
             this.readings.push(
                 this.#getReading(
                     this.rays[i],
@@ -78,31 +80,36 @@ class Sensor {
                 roadBorders[i][0],
                 roadBorders[i][1]
             );
+
+            //console.log(touch);
+
             if (touch) {
                 touches.push(touch);
             }
         }
 
-        for (let i = 0; i < traffic.length; i++){
-            const poly=traffic[i].polygon;
+        for (let i = 0; i < traffic.length; i++) {
+            const poly = traffic[i].polygon;
 
-            for(let j = 0; j < poly.length; j++){
+            for (let j = 0; j < poly.length; j++) {
                 const value = getIntersection(
                     ray[0],
                     ray[1],
                     poly[j],
-                    poly[(j+1)%poly.length]
+                    poly[(j + 1) % poly.length]
                 );
-                if(value){
+                if (value) {
                     touches.push(value);
                 }
             }
-            
+
         }
 
-        if (touches.length == 0)
+        if (touches.length == 0) {
             return null;
+        }
         else {
+            
             //getIntersection returns an x, y, and offset from sensor start point
             //and we are only interested in collecting the offsets
             //into an array
