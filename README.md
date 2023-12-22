@@ -2,7 +2,7 @@ This repository is the outcome of following a tutorial offered by FreeCodeCamp, 
 
 Tutorial link:  https://www.youtube.com/watch?v=Rs_rAxEsAvI
 
-The objective was to make a rectangle 'self driving car' that could make its way through traffic, using a simple neural network for decision making.
+The objective was to make a rectangular 'self driving car' that could make its way through traffic, using a simple neural network for decision making.
 
 The program is made in JavaScript with no additional libraries used.
 
