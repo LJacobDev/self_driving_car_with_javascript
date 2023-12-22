@@ -174,10 +174,7 @@ function animate(time) {
     //look like moving dashed lines
     networkContext.lineDashOffset = -time / 50;
 
-    //this is supposed to be showing what the neuron
-    //on and off states are, but it doesn't seem to be doing that yet,
-    //but it does show the outputs being used
-    //and it seems to show what the weights of the connections are
+    //this is showing what the neuron on and off states are
     Visualizer.drawNetwork(networkContext, bestCar.brain);
 
     //this will cause this animate method 
